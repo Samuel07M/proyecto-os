@@ -17,7 +17,6 @@ static void ensure_std_fds(void) {
   }
 }
 
-// Funcion principal
 int main(void) {
   printf("\n>>> SOY LA NUEVA SHELL <<<\n\n");
   static char line[MAXLINE]; // declara un arreglo "line" de maximo MAXLINE = 128 caracteres
@@ -27,37 +26,27 @@ int main(void) {
 
   // Ciclo REPL (Read, Eval, Print Loop)
   while (1) {
-    printf("$ "); // Indicador de que la shell está lista
-    memset(line, 0, sizeof(line)); // Limpia el bufer con ceros para eliminar "basura" de comandos anteriores
-    gets(line, sizeof(line)); // Lee una linea completa del teclado (stdin)
+    printf("$ ");
+    memset(line, 0, sizeof(line));
+    gets(line, sizeof(line));
 
-    // Condicion por si el usuario no ingresa nada
     if (line[0] == 0)
       break;
-    
-    // Funcion para limpiar los saltos de linea \n y \r
+
     int len = strlen(line);
     while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) {
       line[len - 1] = '\0'; // Ubica al final del arreglo de linea un caracter nulo
       len--;
     }
 
-    // Funcion de analisis lexico y sintactico
     struct pipeline pl;
     int r = parse_line(line, &pl); // parse_line procesa el arreglo line 
     // Si parse_line devuelve 0 o un # negativo, la shell ignora y vuelve al inicio del while principal
     if (r <= 0)
       continue;
 
-    // Condicion para procesar el comando "exit"
-    /*
-      Si despues del procesamiento de pl, este retorna un 1 (una sola etapa), y la primera palabra procesada es "exit",
-      se libera la memoria y luego se cierra el propio proceso de la shell. 
-
-      Esto porque si dejamos que el "exit" pase a run_pipeline, se crearia el proceso hijo con fork() y ese sería el 
-      proceso que se cerraria, dejando al padre vivo.
-    */ 
-    if (pl.nstages == 1 && pl.stages[0].argc >= 1 && strcmp(pl.stages[0].argv[0], "exit") == 0) {
+    if (pl.nstages == 1 && pl.stages[0].argc >= 1 &&
+        strcmp(pl.stages[0].argv[0], "exit") == 0) {
       free_pipeline(&pl);
       exit(0);
     }
