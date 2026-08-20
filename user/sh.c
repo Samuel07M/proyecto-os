@@ -1,13 +1,15 @@
-#include "kernel/types.h"
-#include "user/user.h"
-#include "kernel/fcntl.h"
+#include "kernel/types.h" // Tipos de datos estandar de xv6
+#include "user/user.h" // Tipos de datos estandar de xv6
+#include "kernel/fcntl.h" // Define las banderas de control de archivos (como O_RDWR para abrir en modo lectura/escritura)
 #include "utils.h"
 #include "parser.h"
 #include "commands.h"
 
+// Funcion para asegurar que que la shell tenga sus fd's predeterminados al iniciar su ejecucion
 static void ensure_std_fds(void) {
   int fd;
   while ((fd = open("console", O_RDWR)) >= 0) {
+    // El ciclo termina cuando esta condicion sea verdadera, porque los fd's predeterminados ya están ocupados
     if (fd >= 3) {
       close(fd);
       break;
@@ -15,40 +17,54 @@ static void ensure_std_fds(void) {
   }
 }
 
+// Funcion principal
 int main(void) {
   printf("\n>>> SOY LA NUEVA SHELL <<<\n\n");
-  static char line[MAXLINE];
+  static char line[MAXLINE]; // declara un arreglo "line" de maximo MAXLINE = 128 caracteres
 
+  // Funcion para asegurar los canales de entrada y salida predeterminados
   ensure_std_fds();
 
+  // Ciclo REPL (Read, Eval, Print Loop)
   while (1) {
-    printf("$ ");
-    memset(line, 0, sizeof(line));
-    gets(line, sizeof(line));
+    printf("$ "); // Indicador de que la shell está lista
+    memset(line, 0, sizeof(line)); // Limpia el bufer con ceros para eliminar "basura" de comandos anteriores
+    gets(line, sizeof(line)); // Lee una linea completa del teclado (stdin)
 
+    // Condicion por si el usuario no ingresa nada
     if (line[0] == 0)
       break;
-
+    
+    // Funcion para limpiar los saltos de linea \n y \r
     int len = strlen(line);
     while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) {
-      line[len - 1] = '\0';
+      line[len - 1] = '\0'; // Ubica al final del arreglo de linea un caracter nulo
       len--;
     }
 
+    // Funcion de analisis lexico y sintactico
     struct pipeline pl;
-    int r = parse_line(line, &pl);
+    int r = parse_line(line, &pl); // parse_line procesa el arreglo line 
+    // Si parse_line devuelve 0 o un # negativo, la shell ignora y vuelve al inicio del while principal
     if (r <= 0)
       continue;
 
-    if (pl.nstages == 1 && pl.stages[0].argc >= 1 &&
-        strcmp(pl.stages[0].argv[0], "exit") == 0) {
+    // Condicion para procesar el comando "exit"
+    /*
+      Si despues del procesamiento de pl, este retorna un 1 (una sola etapa), y la primera palabra procesada es "exit",
+      se libera la memoria y luego se cierra el propio proceso de la shell. 
+
+      Esto porque si dejamos que el "exit" pase a run_pipeline, se crearia el proceso hijo con fork() y ese sería el 
+      proceso que se cerraria, dejando al padre vivo.
+    */ 
+    if (pl.nstages == 1 && pl.stages[0].argc >= 1 && strcmp(pl.stages[0].argv[0], "exit") == 0) {
       free_pipeline(&pl);
       exit(0);
     }
 
-    run_pipeline(&pl);
-    free_pipeline(&pl);
+    run_pipeline(&pl); // Envia la estructura procesada para que se ejecute lo que se tenga que ejecutar 
+    free_pipeline(&pl); // Libera la memoria asignada a la ejecucion anterior luego de finalizar
   }
 
-  exit(0);
+  exit(0); // Cuando se salga del bucle, la shell acaba de forma controlada.
 }

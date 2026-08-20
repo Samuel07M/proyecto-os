@@ -1,8 +1,16 @@
-#ifndef UTILS_H
-#define UTILS_H
+// Archivo de configuracion para definir los limites de todo el sistema (incluidos todos los archivos de código)
 
-#define MAXLINE   128   // longitud maxima de la linea leida por el usuario
-#define MAXARGS   10    // maximo de argumentos por comando (incluye argv[0])
-#define MAXSTAGES 10    // maximo de comandos encadenados por tuberias
+#ifndef UTILS_H // GUARDAS DE INCLUSION
+#define UTILS_H // GUARDAS DE INCLUSION
 
-#endif
+#define MAXLINE   128   // Longitud maxima de caracteres que se pueden escribir en la terminal
+#define MAXARGS   10    // Maximo de argumentos por comando
+#define MAXSTAGES 10    // maximo de comandos encadenados por tuberias ('|')
+
+#endif // Fin de la condicion del archivo de configuracion
+
+/*
+IMPORTANCIA:
+Este archivo es importante porque ayuda a gestionar el uso de la memoria para SO limitados como xv6, y evitar problemas 
+de desbordamiento del buffer.
+*/
