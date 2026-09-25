@@ -114,32 +114,26 @@ Este proyecto se desarrolló sobre el mismo árbol de xv6 en el que se usa el sh
 
 ## Compilación
 
-### Requisitos
-- Linux con `git`, `make`, `perl`, el compilador cruzado RISC-V (`riscv64-linux-gnu-gcc` o `riscv64-unknown-elf-gcc`) y `qemu-system-riscv64`.
-- En Ubuntu/Debian: `sudo apt install git make perl gcc-riscv64-linux-gnu qemu-system-misc`
-
 ### Pasos
 
 ```bash
 # 1. Obtener xv6-riscv en el commit base usado por el proyecto
 git clone https://github.com/mit-pdos/xv6-riscv.git
+
+# 2. Entrar y mover los archivos a un commit especifico de la historia del repositorio
 cd xv6-riscv
 git checkout 75c46385ee4fe194dee76a5bfdc1a55b16ff4a40
 
-# 2. Obtener el repositorio del proyecto (al lado de xv6-riscv)
-git clone https://github.com/Samuel07M/repotest.git ../repotest
+# 3. Obtener el repositorio del proyecto
+git clone https://github.com/Samuel07M/proyecto-os
 
-# 3. Copiar el shell del Proyecto 1 (requerido por la regla $U/_sh del Makefile)
-cp ../repotest/proyecto-os-1/user/* user/
+# 4. Copiar el shell del Proyecto 1
+cp ~/.../proyecto-os/proyecto1/user/* ~/.../xv6-riscv/user/
 
-# 4. Copiar los archivos del Proyecto 2
-cp -r ../repotest/proyecto-os-2/kernel/* kernel/
-cp -r ../repotest/proyecto-os-2/user/* user/
-cp ../repotest/proyecto-os-2/Makefile Makefile
-
-# 5. Compilar
-make clean
-make kernel/kernel fs.img
+# 5. Copiar los archivos del Proyecto 2
+cp ~/.../proyecto-os/proyecto2/user/* ~/.../xv6-riscv/user/
+cp ~/.../proyecto-os/proyecto1/kernel/* ~/.../xv6-riscv/kernel/
+cp ~/.../proyecto-os/proyecto2/Makefile ~/.../xv6-riscv/
 ```
 
 ---
