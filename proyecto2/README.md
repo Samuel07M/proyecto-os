@@ -2,7 +2,7 @@
 
 ## Información General
 
-| | |
+| Información | Detalle |
 |---|---|
 | **Nombre del proyecto** | Proyecto 2 – System Calls en xv6 (`trace` y `sysinfo`) |
 | **Sistema base** | [xv6-riscv](https://github.com/mit-pdos/xv6-riscv), commit `75c46385ee4fe194dee76a5bfdc1a55b16ff4a40` (27-jul-2026) |
