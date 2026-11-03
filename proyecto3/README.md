@@ -101,12 +101,12 @@ Se pueden acelerar las llamadas que solo leen información que el kernel ya tien
 - `getpid()`: es el caso implementado. El pid no cambia mientras el proceso vive.
 - `uptime()`: devuelve la variable global `ticks`. Se podría mapear en modo solo lectura una página compartida por todos los procesos, que el kernel actualice en cada interrupción del reloj.
 
-No se pueden acelerar las que cambian estado del kernel, necesitan privilegios o pueden bloquear al proceso:
+No se pueden acelerar las llamadas que necesitan que el kernel haga algo, porque la página `USYSCALL` es de solo lectura: el proceso solo puede leer datos que el kernel dejó ahí antes, no puede pedirle trabajo al kernel a través de ella. Para eso hace falta entrar al kernel con una llamada al sistema.
 
-- `fork`, `exec`, `exit`, `wait`, `kill`: crean, reemplazan o destruyen procesos y modifican la tabla de procesos.
-- `sbrk`: cambia `p->sz` y la tabla de páginas.
-- `pause` (sleep): debe dormir al proceso y planificar otro.
-- `open`, `close`, `read`, `write`, `pipe`, `dup`, `chdir`, `fstat`, `link`, `unlink`, `mkdir`, `mknod`, `sync`: usan la tabla de archivos, inodos, el disco o los locks del kernel.
+- `fork`, `exec`, `exit`, `wait`, `kill`: crean, reemplazan, terminan o esperan procesos. Eso solo lo puede hacer el kernel.
+- `sbrk`: cambia el tamaño de la memoria del proceso y su tabla de páginas, que el proceso no puede modificar desde modo usuario.
+- `pause`: el proceso debe dejar de ejecutarse durante un tiempo, y eso lo controla el kernel.
+- `open`, `close`, `read`, `write`, `pipe`, `dup`, `chdir`, `fstat`, `link`, `unlink`, `mkdir`, `mknod`, `sync`: trabajan con archivos y dispositivos (disco, consola). Desde modo usuario el proceso no tiene acceso a ellos; solo el kernel puede usarlos.
 
 ## 4. Riesgo de USYSCALL con PTE_W
 
