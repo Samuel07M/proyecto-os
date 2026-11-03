@@ -1,6 +1,6 @@
 # Sistemas Operativos 2026-2 - xv6-riscv
 
-Repositorio con los proyectos desarrollados en el curso de Sistemas Operativos (Ingeniería de Sistemas - Universidad EAFIT, profesor: José Luis Montoya Pareja). Ambos proyectos extienden [xv6-riscv](https://github.com/mit-pdos/xv6-riscv) y están escritos en C para ejecutarse sobre QEMU.
+Repositorio con los proyectos desarrollados en el curso de Sistemas Operativos (Ingeniería de Sistemas - Universidad EAFIT, profesor: José Luis Montoya Pareja). Los proyectos extienden [xv6-riscv](https://github.com/mit-pdos/xv6-riscv) y están escritos en C para ejecutarse sobre QEMU.
 
 ## Integrantes
 - Samuel Molina Garcés
