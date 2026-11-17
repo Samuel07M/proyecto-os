@@ -140,3 +140,17 @@ krefinc(void *pa)
   kref.refs[PA2IDX(pa)]++;
   release(&kref.lock);
 }   //FIN NUEVO
+
+//NUEVO:
+// Devuelve cuántas referencias tiene la página pa.
+int
+krefcount(void *pa)
+{
+  int n;
+
+  revisar_pa(pa, "krefcount");
+  acquire(&kref.lock);
+  n = kref.refs[PA2IDX(pa)];
+  release(&kref.lock);
+  return n;
+}   //FIN NUEVO
