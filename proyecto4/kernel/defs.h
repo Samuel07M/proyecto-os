@@ -62,6 +62,8 @@ void            kfree(void *);
 void            kinit(void);
 void            krefinc(void *);   //NUEVO
 int             krefcount(void *);   //NUEVO
+uint64          kfreepages(void);   //NUEVO
+uint64          ksharedpages(void);   //NUEVO
 
 // log.c
 void            initlog(int, struct superblock*);

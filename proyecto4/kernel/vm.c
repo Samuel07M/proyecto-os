@@ -549,6 +549,7 @@ cowfault(pagetable_t pagetable, uint64 va)
 
   pa = PTE2PA(*pte);
   flags = (PTE_FLAGS(*pte) | PTE_W) & ~PTE_COW;
+  myproc()->cowfaults++;   //NUEVO
 
   // Solo este proceso usa la página: basta con devolverle PTE_W.
   // Nadie más puede subir el conteo mientras tanto, porque solo un
@@ -563,5 +564,6 @@ cowfault(pagetable_t pagetable, uint64 va)
   memmove(mem, (char *)pa, PGSIZE);
   *pte = PA2PTE(mem) | flags;
   kfree((void *)pa); // quita la referencia de este proceso a la vieja
+  myproc()->cowcopies++;   //NUEVO
   return 0;
 }   //FIN NUEVO

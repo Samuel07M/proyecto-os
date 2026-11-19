@@ -21,6 +21,7 @@ struct run {
 struct {
   struct spinlock lock;
   struct run *freelist;
+  uint64 nlibres;   // NUEVO: páginas en freelist (para cowstat)
 } kmem;
 
 //NUEVO:
@@ -99,6 +100,7 @@ kfree(void *pa)
   acquire(&kmem.lock);
   r->next = kmem.freelist;
   kmem.freelist = r;
+  kmem.nlibres++;   //NUEVO
   release(&kmem.lock);
 }
 
@@ -113,8 +115,10 @@ kalloc(void)
 
   acquire(&kmem.lock);
   r = kmem.freelist;
-  if (r)
+  if (r) {   //NUEVO: se agregaron llaves al if
     kmem.freelist = r->next;
+    kmem.nlibres--;   //NUEVO
+  }   //NUEVO
   release(&kmem.lock);
 
   if (r) {   //NUEVO: se agregaron llaves al if
@@ -151,6 +155,33 @@ krefcount(void *pa)
   revisar_pa(pa, "krefcount");
   acquire(&kref.lock);
   n = kref.refs[PA2IDX(pa)];
+  release(&kref.lock);
+  return n;
+}   //FIN NUEVO
+
+//NUEVO:
+// Número de páginas físicas libres en todo el sistema.
+uint64
+kfreepages(void)
+{
+  uint64 n;
+
+  acquire(&kmem.lock);
+  n = kmem.nlibres;
+  release(&kmem.lock);
+  return n;
+}
+
+// Número de páginas físicas con más de una referencia.
+uint64
+ksharedpages(void)
+{
+  uint64 n = 0;
+
+  acquire(&kref.lock);
+  for (int i = 0; i < NPAGINAS; i++)
+    if (kref.refs[i] > 1)
+      n++;
   release(&kref.lock);
   return n;
 }   //FIN NUEVO
