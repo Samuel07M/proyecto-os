@@ -53,6 +53,8 @@ Todo el código agregado o modificado está marcado con comentarios `NUEVO` (una
 
 **Makefile**: se agregan `$U/_pgtbltest`, `$U/_cowtest` y `$U/_minidb` a `UPROGS`.
 
+`kernel/memlayout.h` y `user/ulib.c` no se modificaron: se usan tal como vienen en `base_proyecto3.patch` (USYSCALL y ugetpid()). Por lo que no se agregaron.
+
 ---
 
 # Integración con xv6
